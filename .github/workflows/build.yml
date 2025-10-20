@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Code Editor APK (Definitive)
 
 on: [push]
 
@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -21,8 +21,23 @@ jobs:
           pip install cython==0.29.34 buildozer
           pip install -r requirements.txt
 
-      - name: Build with Buildozer
+      - name: Run Diagnostics, Failsafe, and Build
         run: |
+          echo "--- DIAGNOSTIC STEP 1: Listing all files after checkout ---"
+          ls -la
+
+          echo "--- FAILSAFE STEP 2: Forcibly create a spec file if missing ---"
+          if [ ! -f buildozer.spec ]; then
+              echo "buildozer.spec NOT FOUND! Running buildozer init..."
+              buildozer init
+          else
+              echo "buildozer.spec was found successfully."
+          fi
+
+          echo "--- DIAGNOSTIC STEP 3: Listing all files again to confirm spec file exists ---"
+          ls -la
+
+          echo "--- FINAL STEP 4: Building the APK ---"
           yes | buildozer android debug
 
       - name: Upload Artifact
