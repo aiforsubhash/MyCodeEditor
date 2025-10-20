@@ -1,4 +1,4 @@
-name: Build Code Editor APK
+name: Build Android APK
 
 on: [push]
 
@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -21,13 +21,12 @@ jobs:
           pip install cython==0.29.34 buildozer
           pip install -r requirements.txt
 
-      - name: Build the APK
+      - name: Build with Buildozer
         run: |
           yes | buildozer android debug
 
-      - name: Upload APK
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: CodeEditor-APK
           path: bin/*.apk
-```*(Self-correction: I've removed the `buildozer.spec` file from this list. It is not strictly necessary as Buildozer can run with default settings which are sufficient for this build, and it removes one more potential point of failure.)*
